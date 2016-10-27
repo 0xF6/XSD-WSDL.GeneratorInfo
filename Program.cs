@@ -102,16 +102,25 @@ namespace RTDLetoGen
             {
                 builder.AppendLine($" {type.Key}: ");
                 builder.AppendLine($"    Response>");
-                foreach (var res in type.Value.Response)
+                if (type.Value.Response.Count == 0)
+                    builder.AppendLine($"     - empty");
+                else
+                    foreach (var res in type.Value.Response)
                 {
-                    builder.AppendLine($"     Type: {res.Type}");
-                    builder.AppendLine($"     Name: {res.Name}");
+                    builder.AppendLine($"     - Type: {res.Type}");
+                    builder.AppendLine($"     - Name: {res.Name}");
+                    builder.AppendLine($"");
                 }
                 builder.AppendLine($"    Request>");
+
+                if (type.Value.Request.Count == 0)
+                    builder.AppendLine($"     - empty");
+                else
                 foreach (var res in type.Value.Request)
                 {
-                    builder.AppendLine($"     Type: {res.Type}");
-                    builder.AppendLine($"     Name: {res.Name}");
+                    builder.AppendLine($"     - Type: {res.Type}");
+                    builder.AppendLine($"     - Name: {res.Name}");
+                    builder.AppendLine($"");
                 }
                 builder.AppendLine($"");
                 builder.AppendLine($"");
@@ -123,6 +132,8 @@ namespace RTDLetoGen
             {
                 builder.AppendLine($" {s}");
             }
+            builder.AppendLine($"");
+            builder.AppendLine($"");
 
             builder.AppendLine($"   -[ OTHER TYPE ]-    ");
 
@@ -131,10 +142,9 @@ namespace RTDLetoGen
                 builder.AppendLine($"  Name: {s.Key}");
                 foreach (var field in s.Value)
                 {
-                    builder.AppendLine($" --======================");
-                    builder.AppendLine($"     Name: {field.Name}");
-                    builder.AppendLine($"     Type: {field.Type}");
-                    builder.AppendLine($" --======================");
+                    builder.AppendLine($"     - Name: {field.Name}");
+                    builder.AppendLine($"     - Type: {field.Type}");
+                    builder.AppendLine($"");
                 }
                 builder.AppendLine($"");
                 builder.AppendLine($"");
@@ -156,14 +166,16 @@ namespace RTDLetoGen
             typeof(int).Name,
             typeof(long).Name,
             typeof(short).Name,
-            typeof(object).Name
+            typeof(object).Name,
+            typeof(bool).Name,
+            typeof(float).Name
         };
 
         public static string IsTypePrimitive(this string s)
         {
             if (listOfPrimitive.Contains(s))
-                return s.ToLower();
-            return s;
+                return s.ToLower().Replace("int32", "int").Replace("boolean", "bool").Replace("single", "float");
+            return s.Replace("List`1", "List<>");
         }
     }
 }
